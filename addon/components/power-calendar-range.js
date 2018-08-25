@@ -3,12 +3,14 @@ import { assign } from '@ember/polyfills';
 import CalendarComponent from './power-calendar';
 import fallbackIfUndefined from '../utils/computed-fallback-if-undefined';
 import {
-  normalizeDate,
-  normalizeRangeActionValue,
   diff,
+  endOf,
   isAfter,
   isBefore,
-  normalizeDuration
+  normalizeDate,
+  normalizeDuration,
+  normalizeRangeActionValue,
+  startOf,
 } from 'ember-power-calendar-utils';
 
 export default CalendarComponent.extend({
@@ -67,18 +69,11 @@ export default CalendarComponent.extend({
   // Actions
   actions: {
     select(day, calendar, e) {
-      let range = this._buildRange(day);
-      let { start, end } = range.date;
-      if (start && end) {
-        let { minRange, maxRange } = this.get('publicAPI');
-        let diffInMs = Math.abs(diff(end, start));
-        if (diffInMs < minRange || maxRange && diffInMs > maxRange) {
-          return;
-        }
-      }
-      let action = this.get('onSelect');
+      if (day.isDisabled) return;
+
+      const action = this.get('onSelect');
       if (action) {
-        action(range, calendar, e);
+        action(this._buildRange(day), calendar, e);
       }
     }
   },
@@ -114,14 +109,22 @@ export default CalendarComponent.extend({
     return this._buildDefaultRange(day, start, end);
   },
 
-  _buildDefaultRange(day, start, end) {
+  _buildDefaultRange({ date, type }, start, end) {
     if (start && !end) {
-      if (isAfter(start, day.date)) {
-        return normalizeRangeActionValue({ date: { start: day.date, end: start } });
+      if (isAfter(start, date)) {
+        return normalizeRangeActionValue(this._buildInclusiveRange(date, start, type));
       }
-      return normalizeRangeActionValue({ date: { start: start, end: day.date } });
+      return normalizeRangeActionValue(this._buildInclusiveRange(start, date, type));
     }
 
-    return normalizeRangeActionValue({ date: { start: day.date, end: null } });
+    return normalizeRangeActionValue(this._buildInclusiveRange(date, null, type));
+  },
+
+  _buildInclusiveRange(start, end, type) {
+    return { date: { 
+      start: start ? startOf(start, type) : null, 
+      end: end ? endOf(end, type) : null,
+      type
+    } };
   }
 });

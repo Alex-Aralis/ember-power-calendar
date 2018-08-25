@@ -281,8 +281,8 @@ module('Integration | Component | power calendar range', function(hooks) {
   test('If `publicAPI.action.select` does not invoke the `onSelect` action if the range is smaller than the minRange', async function(assert) {
     assert.expect(2);
     this.selected = { start: new Date(2016, 1, 5), end: null };
-    this.invalidDay = { date: new Date(2016, 1, 6), };
-    this.validDay = { date: new Date(2016, 1, 8), };
+    this.invalidDay = { date: new Date(2016, 1, 6), isDisabled: true };
+    this.validDay = { date: new Date(2016, 1, 8), isDisabled: false };
     let range;
     this.didSelect = function(r) {
       range = r;
@@ -302,8 +302,8 @@ module('Integration | Component | power calendar range', function(hooks) {
   test('If `publicAPI.action.select` does not invoke the `onSelect` action if the range is bigger than the maxRange', async function(assert) {
     assert.expect(2);
     this.selected = { start: new Date(2016, 1, 5), end: null };
-    this.validDay = { date: new Date(2016, 1, 6) };
-    this.invalidDay = { date: new Date(2016, 1, 8) };
+    this.validDay = { date: new Date(2016, 1, 6), isDisabled: false  };
+    this.invalidDay = { date: new Date(2016, 1, 8), isDisabled: true  };
     let range;
     this.didSelect = function(r) { range = r; };
     await render(hbs`

@@ -180,7 +180,8 @@ export default Component.extend({
       isFocused: this.get('focusedId') === id,
       isCurrentMonth: date.getMonth() === calendar.center.getMonth(),
       isToday: isSame(date, today, 'day'),
-      isSelected: this.dayIsSelected(date, calendar)
+      isSelected: this.dayIsSelected(date, calendar),
+      type: 'day'
     });
   },
 

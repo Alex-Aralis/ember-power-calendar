@@ -140,7 +140,8 @@ export default Component.extend({
       isCurrentMonth: isSame(date, thisMonth, 'month'),
       isDisabled: this.monthIsDisabled(date),
       isFocused: this.get('focusedId') === id,
-      isSelected: this.monthIsSelected(date, calendar)
+      isSelected: this.monthIsSelected(date, calendar),
+      type: 'month'
     });
   },
 
