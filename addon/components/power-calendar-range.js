@@ -7,6 +7,7 @@ import {
   endOf,
   isAfter,
   isBefore,
+  isSame,
   normalizeDate,
   normalizeDuration,
   normalizeRangeActionValue,
@@ -92,8 +93,17 @@ export default CalendarComponent.extend({
 
   _buildRangeByProximity(day, start, end) {
     const { date, type } = day;
-
+    
     if (start && end) {
+      if (isSame(start, end, type) && isSame(date, start, type))
+        return normalizeRangeActionValue(this._buildInclusiveRange(null, null, type));
+      
+      if (isSame(start, date, type))
+        return normalizeRangeActionValue(this._buildInclusiveRange(end, null, type));
+
+      if (isSame(end, date, type)) 
+        return normalizeRangeActionValue(this._buildInclusiveRange(start, null, type));
+
       let changeStart = Math.abs(diff(date, end)) > Math.abs(diff(date, start));
     
       return changeStart
@@ -103,7 +113,7 @@ export default CalendarComponent.extend({
     }
 
     if (isBefore(date, start)) {
-      return normalizeRangeActionValue(this._buildInclusiveRange(date, null, type));
+      return normalizeRangeActionValue(this._buildInclusiveRange(date, start, type));
     }
 
     return this._buildDefaultRange(day, start, end);
