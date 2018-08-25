@@ -61,8 +61,8 @@ export default CalendarComponent.extend({
     return normalizeDate(center);
   }),
 
-  publicAPI: computed('_publicAPI', 'minRange', 'maxRange', function() {
-    let rangeOnlyAPI = this.getProperties('minRange', 'maxRange');
+  publicAPI: computed('_publicAPI', 'minRange', 'maxRange', 'proximitySelection', function() {
+    let rangeOnlyAPI = this.getProperties('minRange', 'maxRange', 'proximitySelection');
     return assign(rangeOnlyAPI, this.get('_publicAPI'));
   }),
 
@@ -91,19 +91,19 @@ export default CalendarComponent.extend({
   },
 
   _buildRangeByProximity(day, start, end) {
-    if (start && end) {
-      let changeStart = Math.abs(diff(day.date, end)) > Math.abs(diff(day.date, start));
+    const { date, type } = day;
 
-      return normalizeRangeActionValue({
-        date: {
-          start: changeStart ? day.date : start,
-          end: changeStart ? end : day.date
-        }
-      });
+    if (start && end) {
+      let changeStart = Math.abs(diff(date, end)) > Math.abs(diff(date, start));
+    
+      return changeStart
+        ? normalizeRangeActionValue(this._buildInclusiveRange(date, end, type))
+        : normalizeRangeActionValue(this._buildInclusiveRange(start, date, type))
+      ;
     }
 
-    if (isBefore(day.date, start)) {
-      return normalizeRangeActionValue({ date: { start: day.date, end: null } });
+    if (isBefore(date, start)) {
+      return normalizeRangeActionValue(this._buildInclusiveRange(date, null, type));
     }
 
     return this._buildDefaultRange(day, start, end);
