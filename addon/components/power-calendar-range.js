@@ -70,7 +70,7 @@ export default CalendarComponent.extend({
     select({ date }, calendar, e) {
       assert(
         'date must be either a Date, or a Range', 
-        date && (date.hasOwnProperty('start') || date.hasOwnProperty('end') || date instanceof Date)
+        date && (date instanceof Date || date.hasOwnProperty('start') || date.hasOwnProperty('end'))
       );
 
       let range;
