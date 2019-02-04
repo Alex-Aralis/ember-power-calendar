@@ -55,7 +55,7 @@ export default CalendarComponent.extend({
   _buildCollection(days) {
     let selected = this.get("publicAPI.selected") || [];
 
-    for (const day of days) {
+    for (let day of days) {
       let index = selected.findIndex(selectedDate => isSame(day.date, selectedDate, "day"));
       if (index === -1) {
         selected = [...selected, day.date];
